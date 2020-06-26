@@ -45,7 +45,7 @@ function Home(props: Props) {
         !requestedUsers.current.has(question.user_id) &&
         question.user_id !== props.currentUser
       ) {
-        props.loadUser(question.user_id);
+        // props.loadUser(question.user_id);
         requestedUsers.current.add(question.user_id);
       }
       // fetch answers
@@ -59,7 +59,7 @@ function Home(props: Props) {
         !requestedUsers.current.has(answer.user_id) &&
         answer.user_id !== props.currentUser
       ) {
-        props.loadUser(answer.user_id);
+        // props.loadUser(answer.user_id);
         requestedUsers.current.add(answer.user_id);
       }
     }

@@ -17,39 +17,11 @@ interface Props {
 }
 function App(props: Props) {
   useEffect(() => {
-    const handleAuth0Redirect = (appState: any) => {
-      history.push(
-        appState && appState.targetUrl
-          ? appState.targetUrl
-          : window.location.pathname
-      );
-    };
-
-    props.initAuth0(
-      {
-        domain: config.domain,
-        client_id: config.clientId,
-        audience: config.audience,
-        redirect_uri: window.location.origin,
-        useRefreshToken: config.useRefreshToken,
-      },
-      handleAuth0Redirect
-    );
-  }, []);
-  useEffect(() => {
     // load currentUser
     if (props.isAuthenticated) {
-      props.loadUser(props.currentUser);
+      // props.loadUser(props.currentUser);
     }
   }, [props.isAuthenticated]);
-
-  if (props.isLoading) {
-    return (
-      <div className="app">
-        <Spinner className="spinner spinner-centered" />
-      </div>
-    );
-  }
 
   return (
     <Router history={history}>

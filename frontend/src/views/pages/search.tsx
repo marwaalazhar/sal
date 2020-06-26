@@ -32,7 +32,7 @@ function SearchPage(props: Props) {
         !requestedUsers.current.has(question.user_id) &&
         question.user_id !== props.currentUser
       ) {
-        props.loadUser(question.user_id);
+        // props.loadUser(question.user_id);
         requestedUsers.current.add(question.user_id);
       }
     }

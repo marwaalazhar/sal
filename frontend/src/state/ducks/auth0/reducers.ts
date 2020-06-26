@@ -3,9 +3,11 @@ const defaultState = {
   isLoading: true,
   errorMessage: null,
   accessToken: null,
-  isAuthenticated: false,
+  // isAuthenticated: false,
   currentUser: null,
   client: null,
+
+  isAuthenticated: true // this is really bad, but it's just for this branch
 };
 
 function auth0Reducer(state = defaultState, action: Auth0ActionTypes) {
