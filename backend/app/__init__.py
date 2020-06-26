@@ -22,15 +22,15 @@ def get_formated_questions(questions):
     return formated_questions
 
 
-def create_app(test_config=None):
+def create_app(test_env=False):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True,
         static_folder='../../frontend/build',
         static_url_path='/')
-    if test_config is None:
+    if test_env is False:
         # load config file if it exists
         app.config.from_pyfile('config.py', silent=True)
-    setup_db(app)
+        setup_db(app)
 
     @app.route("/")
     def index():
