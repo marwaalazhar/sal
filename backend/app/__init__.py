@@ -1,9 +1,6 @@
 from flask import Flask, jsonify, request, abort, _request_ctx_stack
 from flask_cors import CORS, cross_origin
 from backend.database import setup_db, Answer, Question
-from backend.auth import (init_auth0, Auth0Error, AuthError,
-                  requires_auth, requires_permission)
-
 
 def get_paginated_items(req, items, items_per_page=20):
     page = req.args.get('page', 1, int)
@@ -34,7 +31,6 @@ def create_app(test_config=None):
         # load config file if it exists
         app.config.from_pyfile('config.py', silent=True)
     setup_db(app)
-    auth0 = init_auth0()
 
     @app.route("/")
     def index():
@@ -88,7 +84,6 @@ def create_app(test_config=None):
         })
 
     @app.route('/api/questions/<question_id>', methods=['PATCH'])
-    @requires_auth
     def select_best_answer(question_id):
         data = request.get_json() or []
         if 'answer' not in data:
@@ -97,10 +92,6 @@ def create_app(test_config=None):
         question = Question.query.get(question_id)
         if question == None:
             abort(404, 'question not found')
-        if _request_ctx_stack.top.current_user['sub'] != question.user_id:
-            if requires_permission('update:questions'):
-                raise AuthError('You don\'t have '
-                                'the authority to delete other users answers', 403)
         answer = Answer.query.get(answer_id)
         if answer not in question.answers:
             abort(400, 'the provided answer is not valid')
@@ -115,12 +106,11 @@ def create_app(test_config=None):
         })
 
     @app.route('/api/questions', methods=['POST'])
-    @requires_auth
     def post_question():
         data = request.get_json() or []
         if 'content' not in data:
             abort(400, 'content expected in request body')
-        user_id = _request_ctx_stack.top.current_user['sub']
+        user_id = 'test' # should be getting it from jwt in production
         new_question = Question(user_id, data['content'])
         try:
             new_question.insert()
@@ -132,15 +122,10 @@ def create_app(test_config=None):
         })
 
     @app.route('/api/questions/<question_id>', methods=['DELETE'])
-    @requires_auth
     def delete_question(question_id):
         question = Question.query.get(question_id)
         if question == None:
             abort(404)
-        if _request_ctx_stack.top.current_user['sub'] != question.user_id:
-            if not requires_permission('delete:questions'):
-                raise AuthError('You don\'t have '
-                                'the authority to delete other users questions', 403)
         try:
             question.delete()
         except Exception:
@@ -177,7 +162,6 @@ def create_app(test_config=None):
         })
 
     @app.route('/api/questions/<question_id>/answers', methods=['POST'])
-    @requires_auth
     def post_answer(question_id):
         data = request.get_json() or []
         if 'content' not in data:
@@ -185,7 +169,7 @@ def create_app(test_config=None):
         question = Question.query.get(question_id)
         if question == None:
             abort(404, 'question not found')
-        user_id = _request_ctx_stack.top.current_user['sub']
+        user_id = 'test' # should be getting it from jwt in production
         new_answer = Answer(user_id, data['content'], question_id)
         try:
             new_answer.insert()
@@ -197,16 +181,10 @@ def create_app(test_config=None):
         })
 
     @app.route('/api/answers/<answer_id>', methods=['DELETE'])
-    @requires_auth
     def delete_answer(answer_id):
         answer = Answer.query.get(answer_id)
         if answer == None:
             abort(404)
-        if _request_ctx_stack.top.current_user['sub'] != answer.user_id:
-            if not requires_permission('delete:answers'):
-                raise AuthError('You don\'t have '
-                                'the authority to delete other users answers', 403)
-
         question = Question.query.get(answer.question_id)
         try:
             answer.delete()
@@ -222,19 +200,6 @@ def create_app(test_config=None):
             'question_id': question.id # the answer question id
         })
 
-    # get users public data
-    @app.route('/api/users/<user_id>')
-    def get_public_user(user_id):
-        # response is a dict object
-        public_fields = ['user_id', 'name', 'picture', 'user_metadata']
-        response = auth0.get_user(user_id, public_fields)
-        # check for errors
-        if response.get('error') is not None:
-            abort(response['statusCode'], response['message'])
-        return jsonify({
-            'success': True,
-            'user': response
-        })
 
     # handling errors
     @app.errorhandler(404)
@@ -274,22 +239,6 @@ def create_app(test_config=None):
             'message': error.description,
             'error': 405
         }), 405
-
-    @app.errorhandler(AuthError)
-    def handle_auth_error(error):
-        return jsonify({
-            'success': False,
-            'message': error.message,
-            'error': error.status_code
-        }), error.status_code
-
-    @app.errorhandler(Auth0Error)
-    def handle_auth_error(error):
-        return jsonify({
-            'success': False,
-            'message': error.message,
-            'error': error.status_code
-        }), error.status_code
 
     @app.errorhandler(500)
     def handle_auth_error(error):
