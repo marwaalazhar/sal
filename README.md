@@ -1,7 +1,7 @@
 # Sal
 Sal (taken from Arabic word سل which means Ask) is QA Engine based on PostgreSQL database system, Python Flask micro framework and ReactJS library.
 
-Sal live version is [here](https://sal22.herokuapp.com/).
+### Sal live version is [here](https://sal22.herokuapp.com/).
 
 ## Motivation
 The project was started as a final project for Udacity Full Stack Nanodegree program but after investing a lot of time and energy in the project to make it a complete fully function app, I decided to make the project as a guide to create a full stack web app using python and react, though really understanding the project will help you with any other tech stack.
@@ -12,9 +12,6 @@ Please forgive me for any un clarity or bugs in the code as I designed and devel
 
 By the way, CONTRIBUTIONS ARE REALLY WELCOMED
 
-## Screenshot
-image
-
 ## Tech Stack
 The app tech stack includes:
 
@@ -23,6 +20,7 @@ The app tech stack includes:
 * **SQLAlchemy ORM** to be our ORM library of choice.
 * **Python3** and **Flask** as our server language and server framework.
 * **Flask-Migrate** for creating and running schema migrations.
+* **TypeScript** as our client side language
 * **Redux** as our frontend container for the app state.
 * **ReactJS**, **React Router** and **React Redux** as our frontend Framework (yes, I think all of these three libraries combined to be forming kind of a framework).
 * **HTML**, **SCSS**, and **bootstrap 4**
@@ -31,7 +29,7 @@ The app tech stack includes:
 I have also used **Figma** (it was the first time I do but I’m really surprised how really powerful it is) and **Microsoft fluent design language** for the web to design Sal
 
 ## Project Structure
-  ```sh
+  ```
   ├── README.md
   ├── .editorconfig
   ├── .gitignore
@@ -59,6 +57,9 @@ I have also used **Figma** (it was the first time I do but I’m really surprise
 * `auth` -- contains all auth0 logic
 * `database` -- contains database models and setup
 * `app` -- The most important folder which contains flask app (all routes and http serving logic defined within it)
+
+## Issues
+The project have a lot of known issues and they exist in [issues](https://github.com/ahmedhrayyan/sal/issues) tab categorized by priority. If you have an issue that is not there, please open a new one and I will respond ASAP.
 
 ## Documentation
 Please check [wiki](https://github.com/ahmedhrayyan/sal/wiki) for Details about Getting Started, Deployment and API Reference
